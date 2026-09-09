@@ -67,13 +67,25 @@ function loadCorpus(dir) {
     .filter((x) => x && x.body.length > 0);
 }
 
+// Consumer mail providers, used only to separate "wrote to a person" from
+// "wrote to an organisation". Not exhaustive and does not need to be.
+const CONSUMER_MAIL = /^(gmail|googlemail|outlook|hotmail|live|msn|yahoo|ymail|icloud|me|mac|aol|gmx|web|protonmail|proton|pm|tutanota|fastmail|zoho|free|orange|wanadoo|sfr|laposte|bbox)\./;
+
 // Recipient class from the address alone. Crude on purpose: the point is to
 // give the model a hint it can correct, not to classify correctly up front.
+//
+// Colleagues are recognised as "shares a domain with the user", passed in as
+// OWN_DOMAINS, rather than by a hardcoded list of company names. A list would
+// have to be edited by every person who runs this, would be wrong for all of
+// them by default, and would put the runner's employer in the source.
+const ownDomains = (process.env.OWN_DOMAINS || '')
+  .split(',').map((d) => d.trim().toLowerCase()).filter(Boolean);
+
 function recipientClass(to = '') {
   const domain = (to.split('@')[1] || '').toLowerCase();
   if (!domain) return 'unknown';
-  if (/gmail|outlook|hotmail|yahoo|icloud|free\.fr|orange\.fr|wanadoo/.test(domain)) return 'personal-or-external';
-  if (/privasys|secretarium/.test(domain)) return 'colleague';
+  if (ownDomains.some((d) => domain === d || domain.endsWith('.' + d))) return 'colleague';
+  if (CONSUMER_MAIL.test(domain + '.')) return 'personal-or-external';
   return 'business';
 }
 
