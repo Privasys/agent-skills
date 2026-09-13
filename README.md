@@ -16,7 +16,7 @@ an edit in Drive is the behaviour of the next session. No build, no deploy.
 
 | Skill | What it does |
 |---|---|
-| `inbox-triage/` | Reads what arrived, labels it in the user's own mail client, and leaves a draft where a reply is owed. Never sends. |
+| `inbox-triage/` | Triages what arrived since the last run (never "everything unread"), labels it in the user's own mail client, and drafts only where a reply is owed. Never sends. |
 | `learn-writing-style/` | Reads the user's own sent mail and writes the style document every later draft is written against. |
 
 Licence: MIT, so anyone can copy, edit and publish their own.
