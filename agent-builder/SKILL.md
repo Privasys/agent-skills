@@ -108,17 +108,15 @@ For every kind in `resources`, look at `list_access`. If it is not
 
 1. **First make sure there is something to approve.** For `mail.mailbox`,
    call the mail tool `account` before anything else. If it says no mailbox
-   is connected, connect it **in this conversation**: ask the user, with
-   your question tool, for their email address and an app password (for
-   Gmail: Google account, Security, App passwords; never their sign-in
-   password; the IMAP server only if it is not Gmail), then call
-   `connect_mailbox` with the answers. Say what happens to them: the whole
-   exchange runs inside confidential computing, the credential is sealed
-   in their own Drive, and this session is theirs, in their Drive too. If
-   the tool answers that their device is being asked to approve the
-   service's folder, tell them to tap it and call `connect_mailbox` again.
-   Do not call `request_access` before the mailbox is connected: the
-   wallet would answer "nothing to approve".
+   is connected, call `connect_mailbox` **with no arguments**. The service
+   then asks the user directly, on their own screen, for their address and
+   an app password; that form is not part of this conversation and you
+   never see what they type. Never ask for a password yourself. Tell the
+   user, before calling it, that a form from the mail connector is about to
+   appear and why it is separate. If the tool answers that their device is
+   being asked to approve the service's folder, tell them to tap it and
+   call `connect_mailbox` again. Do not call `request_access` before the
+   mailbox is connected: the wallet would answer "nothing to approve".
 2. Once `connect_mailbox` has answered linked, call `request_access` for
    the kind and tell the user their device will ask.
 
