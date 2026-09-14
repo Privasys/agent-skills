@@ -101,14 +101,24 @@ If a Drive tool refuses because this workspace's Drive knowledge is off or
 narrowed, say so: the agent has to be written from a workspace that may
 reach Drive, and the user chooses that under the workspace's menu.
 
-## 3. Ask for each consent, here, now
+## 3. Ask for each consent, here, now, in the right order
 
 For every kind in `resources`, look at `list_access`. If it is not
-`approved`, call `request_access` for it and tell the user their device
-will ask. An agent whose consent is missing will simply refuse its first
-run with the same words you would see; better to settle it now. If a
-resource is `declined`, respect that unless the user says otherwise, and
-only then ask again with `ask_again: true`.
+`approved`:
+
+1. **First make sure there is something to approve.** For `mail.mailbox`,
+   call the mail tool `account` before anything else. If its refusal says
+   the mailbox is not linked, give the user the page it names, tell them
+   the password is entered there and never here, and **stop**. Do not call
+   `request_access` yet: the wallet would answer "nothing to approve" on
+   their phone.
+2. Once they say it is linked (or the tool answers), call `request_access`
+   for the kind and tell the user their device will ask.
+
+An agent whose consent is missing will simply refuse its first run with the
+same words you would see; better to settle it now. If a resource is
+`declined`, respect that unless the user says otherwise, and only then ask
+again with `ask_again: true`.
 
 Do not ask for the assistant's spend consent here; that is settled at
 sign-in and is not per agent.
