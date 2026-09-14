@@ -143,6 +143,17 @@ sign-in and is not per agent.
   `paused: true`.
 - To remove it, delete the folder in Drive.
 
+## What an agent is NOT
+
+An agent is two files in the user's Drive. It is **not a program**. Never
+write a script, a daemon, a scheduler, a poller or any code for it, never
+create files in this workspace for it, and never run anything in the
+background yourself: the harness reads `agent.yaml` and runs the agent on
+its trigger, in a session of its own, with the same tools you have. If you
+find yourself checking for Python, Node or an HTTP API, stop: you have left
+this skill. Go back to section 2 and write the two files through Drive's
+tools.
+
 ## Rules you do not bend
 
 - **Definition changes happen in conversation, never inside a scheduled
