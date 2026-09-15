@@ -11,7 +11,7 @@ Drive, under the assistant's app folder:
 ```
 AppData/<assistant folder>/agents/<Agent name>/
   agent.md        who the agent is and its standing instructions
-  agent.yaml      what starts it, what it needs, how often it may run
+  agent.yaml      what a run does, what starts it, how often it may run
   skills/         skills specific to this agent (optional)
   state/          written by runs, never by you
   runs/           written by runs, never by you
@@ -39,9 +39,10 @@ Ask, briefly, and only what the template below cannot default:
   `24h`), or `on: mail.changes` (a message arrived in the linked mailbox).
   Both may be set. If they want a time of day, say that only intervals and
   arrivals are supported for now and pick the nearest interval.
-- **What it needs.** The resources it will use, by kind, from what
+- **What it needs.** The resources its runs will use, by kind, from what
   `list_access` reports: `mail.mailbox` for the mailbox, `storage` for
-  Drive. Do not declare what the run will not use.
+  Drive. This is not written in the folder; it is what you ask consent
+  for in section 3. Do not ask for what the run will not use.
 - **How careful.** Defaults are right for almost everyone: `debounce: 2m`
   (a burst of arrivals becomes one run), `min_interval: 10m` (never more
   often than this, whatever arrives, and one run at a time).
@@ -91,7 +92,6 @@ Privasys Harness on their behalf.
 prompt: <one or two sentences: what a run does>
 trigger:
   on: mail.changes        # or: every: 2h   (both may be set)
-resources: [mail.mailbox]
 debounce: 2m
 min_interval: 10m
 paused: false
@@ -103,8 +103,8 @@ reach Drive, and the user chooses that under the workspace's menu.
 
 ## 3. Ask for each consent, here, now, in the right order
 
-For every kind in `resources`, look at `list_access`. If it is not
-`approved`:
+For every resource kind agreed in section 1, look at `list_access`. If it
+is not `approved`:
 
 1. **First make sure there is something to approve.** For `mail.mailbox`,
    call the mail tool `account` before anything else. If it says no mailbox
@@ -158,11 +158,12 @@ tools.
   run.** A run that thinks its definition is wrong reports that and stops.
 - **One file per fact.** `agent.md` is prose for the model, `agent.yaml` is
   data for the harness; do not duplicate the prompt in both.
-- **No secrets in the folder.** A mailbox password belongs on the
-  connector's own page, never in an agent file.
+- **No secrets in the folder.** A mailbox password is typed into the
+  connector's own form, never into an agent file and never into this
+  conversation.
 - **No new capabilities by prose.** An agent cannot grant itself a resource
-  by mentioning it in `agent.md`; only `resources` plus the user's consent
-  count.
+  by mentioning it in `agent.md`; only the user's consent, given through
+  `request_access`, counts.
 - **Do not create an agent for something the chat can do on the spot.**
   A one-off question is a question, not an agent.
 
@@ -173,6 +174,6 @@ digest."
 
 Agreed: name **Inbox triage**; runs on `mail.changes`; prompt "Triage what
 arrived since the last run following the inbox-triage skill; label, draft
-only where a reply is owed, and end with a digest."; resources
-`[mail.mailbox]`; defaults for the rest. Then `request_access` for
-`mail.mailbox` if it is not approved, and the four sentences of section 4.
+only where a reply is owed, and end with a digest."; it needs
+`mail.mailbox`; defaults for the rest. Then section 3 for `mail.mailbox`
+(connect first, then `request_access`), and the four sentences of section 4.
