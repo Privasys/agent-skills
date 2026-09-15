@@ -50,18 +50,19 @@ Ask, briefly, and only what the template below cannot default:
 Read back the agreed definition in prose before writing anything. Keep it to
 what was agreed; do not invent behaviour the user did not ask for.
 
-## 2. Write the folder through Drive's own tools
+## 2. Write the folder with the harness's own `write_agent` tool
 
-The assistant's app folder is `AppData/<label>/`, where `<label>` is the
-`label` of the `storage` row in `list_access` (for example `Privasystant`
-or `Harness`). Navigate with `list_root` and `list_folder` to `AppData`,
-then the label, then `agents`; create `agents` with `create_folder` if it
-does not exist, then the agent's folder inside it. Files are written with
-`write_file` (`parent_id`, `name`, `content_base64`, `mime: text/markdown`
-or `text/yaml`). Encode the content as base64 yourself.
+Call `write_agent` with `name`, `agent_md` and `agent_yaml`. The harness
+writes `agents/<name>/agent.md` and `agent.yaml` into the assistant's folder
+in the user's Drive (`AppData/<label>/agents/<name>/`) and mirrors the
+folder back as a workspace. Do not write these files into this workspace,
+and do not look for Drive tools to do it: Drive's own tools here are
+read-only, and the harness does the writing. `list_agents` shows what the
+user already has; writing an existing name updates that agent.
 
-Write exactly these two files. Create `skills/` only if the agent needs a
-skill of its own; do not create `state/` or `runs/` (the harness does).
+Write exactly these two files. A skill of the agent's own (`skills/`) and
+the `state/` and `runs/` folders are not yours to create: the user adds a
+skill in Drive if they want one, the harness makes the other two.
 
 `agent.md`:
 
@@ -97,9 +98,9 @@ min_interval: 10m
 paused: false
 ```
 
-If a Drive tool refuses because this workspace's Drive knowledge is off or
-narrowed, say so: the agent has to be written from a workspace that may
-reach Drive, and the user chooses that under the workspace's menu.
+If `write_agent` says the user's Drive folder for this assistant is not
+connected, go to `list_access`: the `storage` resource is what it needs,
+and `request_access` asks the user's device for it.
 
 ## 3. Ask for each consent, here, now, in the right order
 
@@ -130,7 +131,7 @@ sign-in and is not per agent.
 
 ## 4. Tell the user what happens next, precisely
 
-- Within about fifteen seconds the folder is mirrored and the agent exists.
+- Within about a minute the folder is mirrored and the agent exists.
 - With `every`, the first run starts within a minute and then on the
   interval; with `on: mail.changes`, at the next arrival.
 - The workspace named after the agent appears in the sidebar at its first
@@ -148,9 +149,9 @@ write a script, a daemon, a scheduler, a poller or any code for it, never
 create files in this workspace for it, and never run anything in the
 background yourself: the harness reads `agent.yaml` and runs the agent on
 its trigger, in a session of its own, with the same tools you have. If you
-find yourself checking for Python, Node or an HTTP API, stop: you have left
-this skill. Go back to section 2 and write the two files through Drive's
-tools.
+find yourself checking for Python, Node or an HTTP API, or writing files
+into this workspace, stop: you have left this skill. Go back to section 2
+and call `write_agent`.
 
 ## Rules you do not bend
 
