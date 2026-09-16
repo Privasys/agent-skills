@@ -107,19 +107,21 @@ and `request_access` asks the user's device for it.
 For every resource kind agreed in section 1, look at `list_access`. If it
 is not `approved`:
 
-1. **First make sure there is something to approve.** For `mail.mailbox`,
-   call the mail tool `account` before anything else. If it says no mailbox
-   is connected, call `connect_mailbox` **with no arguments**. The service
-   then asks the user directly, on their own screen, for their address and
-   an app password; that form is not part of this conversation and you
-   never see what they type. Never ask for a password yourself. Tell the
-   user, before calling it, that a form from the mail connector is about to
-   appear and why it is separate. If the tool answers that their device is
+1. **Ask the user, then call `request_access` for the kind.** Their device
+   does the rest on one screen: it verifies the service, and if the
+   service needs something first (for `mail.mailbox`, their address and an
+   app password), it asks for it there and sends it straight to the
+   service. Nothing of that enters this conversation and you never see it.
+   Never ask for a password yourself. Tell the user, before calling, that
+   their device will ask them to approve and may ask for their mailbox
+   details on that same screen.
+2. **Only if their device answers that there is nothing to approve** (an
+   older wallet): call the mail tool `connect_mailbox` **with no
+   arguments**. The service then asks the user on their own screen here,
+   separately from this conversation; if it answers that their device is
    being asked to approve the service's folder, tell them to tap it and
-   call `connect_mailbox` again. Do not call `request_access` before the
-   mailbox is connected: the wallet would answer "nothing to approve".
-2. Once `connect_mailbox` has answered linked, call `request_access` for
-   the kind and tell the user their device will ask.
+   call `connect_mailbox` again; once it has answered linked, call
+   `request_access`.
 
 An agent whose consent is missing will simply refuse its first run with the
 same words you would see; better to settle it now. If a resource is
