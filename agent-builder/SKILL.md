@@ -104,8 +104,15 @@ and `request_access` asks the user's device for it.
 
 ## 3. Ask for each consent, here, now, in the right order
 
-For every resource kind agreed in section 1, look at `list_access`. If it
-is not `approved`:
+For every resource kind agreed in section 1, look at `list_access`, then
+**verify with the service itself before trusting `approved`**: the list is
+what the user's device recorded, and the service is the authority (the
+user may have withdrawn the service's folder in Drive since). For
+`mail.mailbox`, call the mail tool `account`; if it answers, the mailbox is
+connected and approved. If it refuses, do exactly what its refusal says
+(it names the call to make, including `ask_again: true` when the device's
+record is stale). If the resource is not `approved`, or the service
+refused:
 
 1. **Ask the user, then call `request_access` for the kind.** Their device
    does the rest on one screen: it verifies the service, and if the
